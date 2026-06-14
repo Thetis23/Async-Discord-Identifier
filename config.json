@@ -1,0 +1,6 @@
+{
+  "webhook_url": "YOUR_DISCORD_WEBHOOK_URL_HERE",
+  "concurrency_limit": 5,
+  "timeout_seconds": 10,
+  "max_retries": 3
+}
