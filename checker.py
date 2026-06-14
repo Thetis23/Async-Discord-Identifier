@@ -7,7 +7,7 @@ import asyncio
 import logging
 from typing import List, Optional, Set
 import aiohttp
-from aiohttp_socks import ProxyConnector  # Supports both SOCKS5 and HTTP protocols
+from aiohttp_socks import ProxyConnector
 from colorama import Fore, Style, init
 
 # Initialize colorama
@@ -17,7 +17,6 @@ init(autoreset=True)
 logging.basicConfig(level=logging.CRITICAL)
 
 class ProxyManager:
-    """Manages proxy loading, rotation, and fault isolation."""
     def __init__(self, filepath: str = "proxy.txt"):
         self.filepath = filepath
         self.proxies: List[str] = []
@@ -118,7 +117,6 @@ class DiscordChecker:
                 async with aiohttp.ClientSession(connector=connector) as session:
                     async with session.post(url, json=payload, headers=headers, timeout=timeout_config) as resp:
                         
-                        # Rate Limit Handling
                         if resp.status == 429:
                             data = await resp.json()
                             retry_after = data.get("retry_after", 2.0)
@@ -126,7 +124,6 @@ class DiscordChecker:
                             await asyncio.sleep(retry_after)
                             continue
                         
-                        # Success / Taken Verification
                         if resp.status == 200:
                             data = await resp.json()
                             if data.get("taken") is False:
@@ -158,8 +155,16 @@ class DiscordChecker:
                 queue.task_done()
 
     async def start(self) -> None:
-        print(Fore.CYAN + "═" * 55)
-        print(f"{Fore.CYAN}          ASYNC DISCORD USERNAME IDENTIFIER (v1.1)")
+        # Beautiful ASCII Art Header
+        print(Fore.CYAN + """
+ █████  ███████ ██    ██ ███    ██  ██████ 
+██   ██ ██       ██  ██  ████   ██ ██      
+███████ ███████   ████   ██ ██  ██ ██      
+██   ██      ██    ██    ██  ██ ██ ██      
+██   ██ ███████    ██    ██   ████  ██████ 
+                                           
+      DISCORD USERNAME IDENTIFIER v1.1
+        """)
         print(Fore.CYAN + "═" * 55)
         print(f"1. {Fore.WHITE}Load usernames from list.txt")
         print(f"2. {Fore.WHITE}Generate & check random 4-char usernames (a-z, 0-9, _, .)")
